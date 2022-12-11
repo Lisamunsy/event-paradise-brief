@@ -47,7 +47,7 @@ for (let i = 0; i < inputs.length; i++) {
 function selectTooltipMessage(element ){
     if (element.validity.valueMissing) {         
         return "Champ obligatoire";
-    } else if (element.value < element.min && element.type === "number"){
+    } else if (element.validity.rangeUnderflow && element.type === "number"){
         return "Doit être positif";
     } else if (element.type === "date") {
         return "Doit être égale ou supérieure à aujourd'hui";
