@@ -15,31 +15,29 @@ for (let i = 0; i < inputs.length; i++) {
         e.preventDefault();
         helpText.classList.add("text-danger");
         element.classList.add( "is-invalid");
-
-        message = selectTooltipMessage(element)
-        tooltip = createTooltip(element, message);
         const firstInvalid = form.querySelector(':invalid');
-
+        message =selectTooltipMessage(element);
+        element.setAttribute("title", message);
+        tooltip = createTooltip(element, message);
         if (element === firstInvalid) {
-            tooltip.show();
-            element.focus()
+            element.focus();
         } 
     });
     
     element.addEventListener('change', (e) => {
-        element.checkValidity();
-        if (element.validity) {
+        const validity =element.checkValidity();
+        const tooltips =document.querySelectorAll(".tooltip");
+        tooltips.forEach(element => {
+            element.remove();
+        });
+        if (validity) {
             helpText.classList.remove("text-danger");
             helpText.classList.add("text-success");
             element.classList.remove("is-invalid");
             element.classList.add("is-valid");
-            if (tooltip != null) {
-                const tooltips =document.querySelectorAll(".tooltip");
-                tooltips.forEach(element => {
-                    element.remove();
-                });
-                tooltip.dispose();
-            } 
+        } else{
+            element.classList.remove("is-valid");
+            element.classList.add("is-invalid");
         }
     })
 }
@@ -55,11 +53,14 @@ function selectTooltipMessage(element ){
 }
 
 function createTooltip(element, message) {
-
+    let position = "bottom";
+    if(element.tagName === "SELECT"){
+        position ="top";
+    }
     return (new bootstrap.Tooltip(element, {
         title : message,
-        placement : "bottom",
-        trigger: "manual"
+        placement : position,
+        trigger: "focus"
     }));
 }
 
