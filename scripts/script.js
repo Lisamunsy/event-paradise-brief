@@ -38,6 +38,8 @@ for (let i = 0; i < inputs.length; i++) {
         } else{
             element.classList.remove("is-valid");
             element.classList.add("is-invalid");
+            tooltip.show()
+            element.focus()
         }
     })
 }
