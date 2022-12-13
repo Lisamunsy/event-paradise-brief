@@ -68,14 +68,42 @@ function createTooltip(element, message) {
 
 form.addEventListener('submit', event => {
     event.preventDefault();
-    form.reset();
-    formElements= form.elements;
-    for (const element of form.elements) {
-        if (element.type != 'submit') {
-            element.classList.remove("is-valid");
-            const helpText = document.querySelector(`#${element.id}Help`);
-            helpText.classList.remove("text-success");
+    const url="http://localhost:8080/events";
+    const options ={
+        method : "POST",
+        headers : {
+            "Content-Type": "application/json",
         }
     }
-    toast.show()
+    const data= {
+        name : inputs[0].value,
+        date: inputs[1].value+"T21:34:55",
+        location : inputs[2].value,
+        theme : inputs[3].value,
+        rate: inputs[4].value,
+        description : inputs[5].value
+    };
+    if (data != null) {
+        options.body = JSON.stringify(data);
+    }
+    fetch(url, options).then((response)=> {
+
+        const headers = response.headers;
+        if (headers.get("Content-Type") == "application/json") {
+            return  response.json(); //  json string;
+        }
+    }).then(()=>{  
+        form.reset();
+        formElements= form.elements;
+        for (const element of form.elements) {
+            if (element.type != 'submit') {
+                element.classList.remove("is-valid");
+                const helpText = document.querySelector(`#${element.id}Help`);
+                helpText.classList.remove("text-success");
+            }
+        }
+        toast.show();
+    }).catch((error)=>{
+        console.warn('Something went wrong.', error);
+    })
 })
