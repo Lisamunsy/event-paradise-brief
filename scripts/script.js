@@ -1,9 +1,5 @@
 const inputs = document.querySelectorAll('input, select, textarea');
 const form = document.querySelector('form');
-const toastElement =document.querySelector('#liveToast');
-const toast = new bootstrap.Toast(toastElement, {
-    delay: 5000
-});
 
 for (let i = 0; i < inputs.length; i++) {
     const element = inputs[i];
@@ -16,7 +12,6 @@ for (let i = 0; i < inputs.length; i++) {
         helpText.classList.add("text-danger");
         element.classList.add( "is-invalid");
         message =selectTooltipMessage(element);
-        element.setAttribute("title", message);
         tooltip = createTooltip(element, message);
         const firstInvalid = form.querySelector(':invalid');
         if (element === firstInvalid ) {
@@ -26,30 +21,23 @@ for (let i = 0; i < inputs.length; i++) {
     
     element.addEventListener('change', (e) => {
         const validity =element.checkValidity();
-        const tooltips =document.querySelectorAll(".tooltip");
-        tooltips.forEach(item => {
-            item.remove();
-        });
         if (validity) {
             helpText.classList.remove("text-danger");
             helpText.classList.add("text-success");
             element.classList.remove("is-invalid");
             element.classList.add("is-valid");
             if (tooltip != null) {
-                tooltip.dispose()
+                tooltip.disable();
             }
         } else if(!validity){
-            element.classList.remove("is-valid");
-            element.classList.add("is-invalid");
             if(tooltip != null){
-                tooltip.dispose();
+                tooltip.enable();
                 message =selectTooltipMessage(element);
-                element.setAttribute("title", message);
-                tooltip = createTooltip(element, message);
+                tooltip.setContent({'.tooltip-inner': message})
                 tooltip.show();
             }
+            element.focus();
         }
-        element.focus()
     })
 }
 
@@ -78,9 +66,12 @@ form.addEventListener('submit', event => {
     for (const element of form.elements) {
         if (element.type != 'submit') {
             element.classList.remove("is-valid");
-            const helpText = document.querySelector(`#${element.id}Help`);
             helpText.classList.remove("text-success");
+            const helpText = document.querySelector(`#${element.id}Help`);
         }
     }
+    const toast = bootstrap.Toast.getOrCreateInstance('#liveToast', {
+        delay: 2500
+    });
     toast.show()
 })
