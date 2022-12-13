@@ -15,11 +15,11 @@ for (let i = 0; i < inputs.length; i++) {
         e.preventDefault();
         helpText.classList.add("text-danger");
         element.classList.add( "is-invalid");
-        const firstInvalid = form.querySelector(':invalid');
         message =selectTooltipMessage(element);
         element.setAttribute("title", message);
         tooltip = createTooltip(element, message);
-        if (element === firstInvalid) {
+        const firstInvalid = form.querySelector(':invalid');
+        if (element === firstInvalid ) {
             element.focus();
         } 
     });
@@ -27,20 +27,29 @@ for (let i = 0; i < inputs.length; i++) {
     element.addEventListener('change', (e) => {
         const validity =element.checkValidity();
         const tooltips =document.querySelectorAll(".tooltip");
-        tooltips.forEach(element => {
-            element.remove();
+        tooltips.forEach(item => {
+            item.remove();
         });
         if (validity) {
             helpText.classList.remove("text-danger");
             helpText.classList.add("text-success");
             element.classList.remove("is-invalid");
             element.classList.add("is-valid");
-        } else{
+            if (tooltip != null) {
+                tooltip.dispose()
+            }
+        } else if(!validity){
             element.classList.remove("is-valid");
             element.classList.add("is-invalid");
-            tooltip.show()
-            element.focus()
+            if(tooltip != null){
+                tooltip.dispose();
+                message =selectTooltipMessage(element);
+                element.setAttribute("title", message);
+                tooltip = createTooltip(element, message);
+                tooltip.show();
+            }
         }
+        element.focus()
     })
 }
 
@@ -55,15 +64,11 @@ function selectTooltipMessage(element ){
 }
 
 function createTooltip(element, message) {
-    let position = "bottom";
-    if(element.tagName === "SELECT"){
-        position ="top";
-    }
-    return (new bootstrap.Tooltip(element, {
+    const tooltipTest = bootstrap.Tooltip.getOrCreateInstance(element, {
         title : message,
-        placement : position,
-        trigger: "focus"
-    }));
+        placement : "top"
+    });
+    return tooltipTest;
 }
 
 form.addEventListener('submit', event => {
