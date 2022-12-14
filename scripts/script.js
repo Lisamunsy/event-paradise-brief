@@ -8,40 +8,43 @@ const toast = new bootstrap.Toast(toastElement, {
 for (let i = 0; i < inputs.length; i++) {
     const element = inputs[i];
     const helpText = document.querySelector(`#${element.id}Help`);
-    let message ="";
-    let tooltip = null;
+    let message =selectTooltipMessage(element);
+    let tooltip = createTooltip(element, message);
+    tooltip.disable();
 
     element.addEventListener('invalid', (e) => {
         e.preventDefault();
         helpText.classList.add("text-danger");
         element.classList.add( "is-invalid");
+        tooltip.enable()
         const firstInvalid = form.querySelector(':invalid');
-        message =selectTooltipMessage(element);
-        element.setAttribute("title", message);
-        tooltip = createTooltip(element, message);
-        if (element === firstInvalid) {
+        if (element === firstInvalid ) {
             element.focus();
         } 
     });
     
-    element.addEventListener('change', (e) => {
-        const validity =element.checkValidity();
-        const tooltips =document.querySelectorAll(".tooltip");
-        tooltips.forEach(element => {
-            element.remove();
-        });
-        if (validity) {
-            helpText.classList.remove("text-danger");
-            helpText.classList.add("text-success");
-            element.classList.remove("is-invalid");
-            element.classList.add("is-valid");
-        } else{
-            element.classList.remove("is-valid");
-            element.classList.add("is-invalid");
-            tooltip.show()
-            element.focus()
+    element.addEventListener('change', () => {
+        if (element.validity.valid) {
+            handleInputsStyle(helpText, "text-danger", "text-success")
+            handleInputsStyle(element, "is-invalid", "is-valid");
+            if (tooltip != null) {
+                tooltip.hide()
+                tooltip.disable();
+            }
+        } else {
+            handleInputsStyle(helpText, "text-success", "text-danger")
+            handleInputsStyle(element, "is-valid", "is-invalid");
+            message =selectTooltipMessage(element);
+            tooltip.setContent({'.tooltip-inner': message})
+            tooltip.enable();
+            tooltip.show();
         }
     })
+}
+
+function handleInputsStyle(element, classToRemove, classtoAdd ){
+    element.classList.remove(classToRemove);
+    element.classList.add(classtoAdd);
 }
 
 function selectTooltipMessage(element ){
@@ -55,15 +58,11 @@ function selectTooltipMessage(element ){
 }
 
 function createTooltip(element, message) {
-    let position = "bottom";
-    if(element.tagName === "SELECT"){
-        position ="top";
-    }
-    return (new bootstrap.Tooltip(element, {
+    const newTooltip = bootstrap.Tooltip.getOrCreateInstance(element, {
         title : message,
-        placement : position,
-        trigger: "focus"
-    }));
+        placement : "top"
+    });
+    return newTooltip;
 }
 
 form.addEventListener('submit', event => {
