@@ -26,32 +26,32 @@
             <div class="row">
                 <div class="mb-4 col-md-4">
                     <label for="name" class="form-label fw-semibold">Nom</label>
-                    <input id="name" type="text" class="form-control " required minlength="1" maxlength="255" title="Name" >
+                    <input name="name" id="name" type="text" class="form-control " required minlength="1" maxlength="255" title="Name" >
                     <div id="nameHelp" class="form-text">Nom de l'événement.</div>
                 </div>
 
                 <div class="mb-4 col-md-4">
                     <label for="date" class="form-label fw-semibold">Date</label>
-                    <input id="date" type="date" class="form-control" required title="Date">
+                    <input name="date" id="date" type="date" class="form-control" required title="Date">
                     <div id="dateHelp" class="form-text">Date de l'événement.</div>
                 </div>
                 
                 <div class="mb-4 col-md-4">
-                    <label for="place" class="form-label fw-semibold">Lieu</label>
-                    <select id="place" class="form-select " aria-label="select" required title="Location">
+                    <label for="location" class="form-label fw-semibold">Lieu</label>
+                    <select name="location" id="location" class="form-select " aria-label="select" required title="Location">
                         <option value="">Choisir un lieu dans la liste</option>
                         <option value="1">Paris</option>
                         <option value="2">Rennes</option>
                         <option value="3">Marseille</option>
                     </select>
-                    <div id="placeHelp" class="form-text">Lieu de l'événement.</div>
+                    <div id="locationHelp" class="form-text">Lieu de l'événement.</div>
                 </div>
             </div>
 
             <div class="row">
                 <div class="mb-4 col-md-8">
                     <label for="theme" class="form-label fw-semibold">Thème</label>
-                    <select id="theme" class="form-select " aria-label="select" required title="Thème">
+                    <select name="theme" id="theme" class="form-select " aria-label="select" required title="Thème">
                         <option value="">Choisir un thème dans la liste</option>
                         <option value="1">Ecologie</option>
                         <option value="2">Ressources Humaines</option>
@@ -64,7 +64,7 @@
                     <label for="rate" class="form-label fw-semibold">Tarif</label>
                     <div class="input-group" >
                         <span class="input-group-text">€</span>
-                        <input  id="rate" type="number" class="form-control" aria-label="Tarif"  required min="0.001" step="0.001">
+                        <input name="rate"  id="rate" type="number" class="form-control" aria-label="Tarif"  required min="0.001" step="0.001">
                     </div>
                     <div id="rateHelp" class="form-text">Tarif journalier de l'événement.</div>
                     
@@ -73,7 +73,7 @@
 
             <div class="mb-4 position-relative">
                 <label for="description" class="form-label fw-semibold">Description</label>
-                <textarea  class="form-control" id="description" rows="3" required maxlength="1000"></textarea>
+                <textarea name="description"  class="form-control" id="description" rows="3" required maxlength="1000"></textarea>
                 <div id="descriptionHelp" class="form-text">Description de l'événement</div>
             </div>
 
