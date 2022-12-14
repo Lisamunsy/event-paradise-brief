@@ -4,10 +4,8 @@ const form = document.querySelector('form');
 for (let i = 0; i < inputs.length; i++) {
     const element = inputs[i];
     const helpText = document.querySelector(`#${element.id}Help`);
-    let message ="";
-    let tooltip = null;
-    message =selectTooltipMessage(element);
-    tooltip = createTooltip(element, message);
+    let message =selectTooltipMessage(element);
+    let tooltip = createTooltip(element, message);
     tooltip.disable();
 
     element.addEventListener('invalid', (e) => {
