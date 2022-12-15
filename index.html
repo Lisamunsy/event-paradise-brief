@@ -22,7 +22,7 @@
 
     <main class="px-3">
         <h1>Créer un événement</h1>
-        <form >
+        <form novalidate>
             <div class="row">
                 <div class="mb-4 col-md-4">
                     <label for="name" class="form-label fw-semibold">Nom</label>
@@ -40,9 +40,6 @@
                     <label for="location" class="form-label fw-semibold">Lieu</label>
                     <select id="location" name="location" class="form-select " aria-label="select" required title="Location">
                         <option value="">Choisir un lieu dans la liste</option>
-                        <option value="1">Paris</option>
-                        <option value="2">Rennes</option>
-                        <option value="3">Marseille</option>
                     </select>
                     <div id="locationHelp" class="form-text">Lieu de l'événement.</div>
                 </div>
@@ -53,9 +50,6 @@
                     <label for="theme" class="form-label fw-semibold">Thème</label>
                     <select id="theme" name="theme" class="form-select " aria-label="select" required title="Thème">
                         <option value="">Choisir un thème dans la liste</option>
-                        <option value="1">Ecologie</option>
-                        <option value="2">Ressources Humaines</option>
-                        <option value="3">Tech</option>
                     </select>
                     <div id="themeHelp" class="form-text">Thème de l'événement.</div>
                 </div>

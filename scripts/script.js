@@ -1,4 +1,38 @@
+// Fill the select options
+const locationUrl ="http://localhost:8080/locations";
+const locationSelect = document.querySelector('#location');
+const themeSelect = document.querySelector('#theme');
+const themeUrl ="http://localhost:8080/themes";
+const optionsGET ={
+    method : "GET"
+}
+
+window.onload=(e)=>{
+    getSelectOptions(locationUrl, locationSelect);
+    getSelectOptions(themeUrl, themeSelect);
+}
+
+function getSelectOptions(url, selectElement) {
+    fetch(url, optionsGET).then((response)=>{
+        return response.json();
+    }).then((data)=>{
+        for (const optiondata of data) {
+            const option = document.createElement('option');
+            option.value = `${optiondata.id}`;
+            option.text =`${optiondata.name}`;
+            selectElement.add(option, null)
+        }
+    }
+    ).catch((error)=>{
+        console.warn('Something went wrong.', error);
+    })
+}
+
+// Handle client-side validation
+
 const inputs = document.querySelectorAll('input, select, textarea');
+const inputNames =[];
+
 const form = document.querySelector('form');
 const toastElement =document.querySelector('#liveToast');
 const toast = new bootstrap.Toast(toastElement, {
@@ -7,22 +41,26 @@ const toast = new bootstrap.Toast(toastElement, {
 
 for (let i = 0; i < inputs.length; i++) {
     const element = inputs[i];
+    inputNames.push(element.name)
     const helpText = document.querySelector(`#${element.id}Help`);
     let message =selectTooltipMessage(element);
     let tooltip = createTooltip(element, message);
     tooltip.disable();
 
+    // Gérer le comportement lorsqu'un champ devient invalide
     element.addEventListener('invalid', (e) => {
         e.preventDefault();
         helpText.classList.add("text-danger");
         element.classList.add( "is-invalid");
         tooltip.enable()
+        // Afficher seulement le premier champ invalide
         const firstInvalid = form.querySelector(':invalid');
         if (element === firstInvalid ) {
             element.focus();
         } 
     });
     
+    // Gérer le comportement lorsqu'on change un champ
     element.addEventListener('change', () => {
         if (element.validity.valid) {
             handleInputsStyle(helpText, "text-danger", "text-success")
@@ -74,35 +112,33 @@ form.addEventListener('submit', event => {
             "Content-Type": "application/json",
         }
     }
-    const data= {
-        name : inputs[0].value,
-        date: inputs[1].value+"T21:34:55",
-        location : inputs[2].value,
-        theme : inputs[3].value,
-        rate: inputs[4].value,
-        description : inputs[5].value
-    };
+    // Récuperer les données du formulaire
+    const data= {};
+    for (let i = 0; i < inputs.length; i++) {
+        data[inputs[i].name] = inputs[i].value;
+    }
+    
     if (data != null) {
         options.body = JSON.stringify(data);
     }
     fetch(url, options).then((response)=> {
-
         const headers = response.headers;
+        // Vérifier si il a une réponse. Si il y a une réponse, c'est qu'il y a une erreure côté serveur
         if (headers.get("Content-Type") == "application/json") {
+            form.checkValidity()
             return  response.json(); //  json string;
-        }
-    }).then(()=>{  
-        form.reset();
-        formElements= form.elements;
-        for (const element of form.elements) {
-            if (element.type != 'submit') {
-                element.classList.remove("is-valid");
-                const helpText = document.querySelector(`#${element.id}Help`);
-                helpText.classList.remove("text-success");
+        } else {
+            form.reset();
+            for (const element of form.elements) {
+                if (element.type != 'submit') {
+                    element.classList.remove("is-valid");
+                    const helpText = document.querySelector(`#${element.id}Help`);
+                    helpText.classList.remove("text-success");
+                }
             }
+            toast.show();
         }
-        toast.show();
     }).catch((error)=>{
-        console.warn('Something went wrong.', error);
+        console.error('Il y a eu une erreur lors de la soumission du formulaire',error);
     })
 })
