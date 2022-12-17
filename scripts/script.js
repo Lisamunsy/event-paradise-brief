@@ -30,10 +30,8 @@ function getSelectOptions(url, selectElement) {
 
 // Handle client-side validation
 
-const inputs = document.querySelectorAll('input, select, textarea');
-const inputNames =[];
-
 const form = document.querySelector('form');
+const inputs = document.querySelectorAll('input, select, textarea');
 const toastElement =document.querySelector('#liveToast');
 const toast = new bootstrap.Toast(toastElement, {
     delay: 5000
@@ -41,7 +39,6 @@ const toast = new bootstrap.Toast(toastElement, {
 
 for (let i = 0; i < inputs.length; i++) {
     const element = inputs[i];
-    inputNames.push(element.name)
     const helpText = document.querySelector(`#${element.id}Help`);
     let message =selectTooltipMessage(element);
     let tooltip = createTooltip(element, message);
@@ -117,14 +114,13 @@ form.addEventListener('submit', event => {
     for (let i = 0; i < inputs.length; i++) {
         data[inputs[i].name] = inputs[i].value;
     }
-    
-    if (data != null) {
-        options.body = JSON.stringify(data);
-    }
+    options.body = JSON.stringify(data);
+
     fetch(url, options).then((response)=> {
         const headers = response.headers;
         // Vérifier si il a une réponse. Si il y a une réponse, c'est qu'il y a une erreure côté serveur
         if (headers.get("Content-Type") == "application/json") {
+            // Déclancher la validation
             form.checkValidity()
             return  response.json(); //  json string;
         } else {
