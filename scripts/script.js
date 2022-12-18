@@ -32,10 +32,10 @@ function getSelectOptions(url, selectElement) {
 
 const form = document.querySelector('form');
 const inputs = document.querySelectorAll('input, select, textarea');
-const toastElement =document.querySelector('#liveToast');
-const toast = new bootstrap.Toast(toastElement, {
-    delay: 5000
+const toast = bootstrap.Toast.getOrCreateInstance('#liveToast', {
+    delay: 2500
 });
+
 
 for (let i = 0; i < inputs.length; i++) {
     const element = inputs[i];
@@ -47,10 +47,7 @@ for (let i = 0; i < inputs.length; i++) {
     // Gérer le comportement lorsqu'un champ devient invalide
     element.addEventListener('invalid', (e) => {
         e.preventDefault();
-        helpText.classList.add("text-danger");
-        element.classList.add( "is-invalid");
-        tooltip.enable()
-        // Afficher seulement le premier champ invalide
+        enableTooltip(tooltip,element, helpText)
         const firstInvalid = form.querySelector(':invalid');
         if (element === firstInvalid ) {
             element.focus();
@@ -67,11 +64,9 @@ for (let i = 0; i < inputs.length; i++) {
                 tooltip.disable();
             }
         } else {
-            handleInputsStyle(helpText, "text-success", "text-danger")
-            handleInputsStyle(element, "is-valid", "is-invalid");
+            enableTooltip(tooltip,element, helpText)
             message =selectTooltipMessage(element);
             tooltip.setContent({'.tooltip-inner': message})
-            tooltip.enable();
             tooltip.show();
         }
     })
@@ -81,6 +76,8 @@ function handleInputsStyle(element, classToRemove, classtoAdd ){
     element.classList.remove(classToRemove);
     element.classList.add(classtoAdd);
 }
+
+// ------------------------------ Tooltip functions
 
 function selectTooltipMessage(element ){
     if (element.validity.valueMissing) {         
@@ -99,6 +96,14 @@ function createTooltip(element, message) {
     });
     return newTooltip;
 }
+
+function enableTooltip(tooltip, element, helpText) {
+    handleInputsStyle(helpText, "text-success", "text-danger")
+    handleInputsStyle(element, "is-valid", "is-invalid");
+    tooltip.enable();
+}
+
+// ------------------------------ Submit event
 
 form.addEventListener('submit', event => {
     event.preventDefault();
